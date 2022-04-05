@@ -1,2 +1,0 @@
-USER_TOKEN_V2 = "cefa24d33744942d3109dd3b8dc58f70fdaeb79ad78acf6e3a7b5e966a17d8189f13c038f3cf6b59bd08f622d6dd1d6f45f8feaed110f761127f1b96cc39720c88b8501ffdebf1bf83bd06852313"
-TABLE_URL = "https://balanced-hero-b7d.notion.site/2a4534fc37de4f00aadf7f3997b3bdc4?v=4dcc9726e6de437aa5d69215a57f9bd7"
