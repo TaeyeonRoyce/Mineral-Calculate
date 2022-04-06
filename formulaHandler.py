@@ -1,4 +1,5 @@
 import ExcelDataExtracter
+import re
 
 # formula examples
 # Zn4Si2O7(OH)2 · H2O
@@ -7,11 +8,12 @@ import ExcelDataExtracter
 # Pb5(VO4)3Cl
 # Fe2+Fe3+2O4
 # PbS
-testFprm = "Zn4Si2O7H2O"  # => {"Zn" : 4, "Si" : 2}
+testFprm = "Zn4Si2O7(O2H)4"
 testFormula = "Zn4Si2O7(OH)2 · H2O"
 
-
-# testFormula = "Zn43Si2O7 · H2O"
+# [Zn, Si, P]
+# [3 ,  8, 1]
+# => {Zn : 3, Si : 8, P : 1}
 def saveToDictionary(symbols, amounts):
     formDict = {}
     for i in range(len(symbols)):
@@ -22,10 +24,8 @@ def saveToDictionary(symbols, amounts):
     return formDict
 
 
-# [Zn, Si, O, H, O]
-# [4 ,  2, 7, 2, 1]
-
-
+# Zn4Si2O7H2O
+# => {Zn : 4, Si : 2, O : 8, H : 2}
 def countElement(subFormula):
     symbols = []
     amounts = []
@@ -52,20 +52,30 @@ def countElement(subFormula):
     return saveToDictionary(symbols, amounts)
 
 
-print(countElement(testFprm))
+def removeNoiseChar(formula):
+    regex = ""
+    return re.sub(regex, "", formula)
 
 
 def mutipleCount(subFormula, num):
     countDict = countElement(subFormula)
-    for key, value in countDict:
+    for key in countDict:
         countDict[key] *= int(num)
-    return num
+    return countDict
 
 
 def containBracket(formula):
     if "(" in formula:
         return True
     return False
+
+
+def sumTwoDictionary(toDict, fromDict):
+    for key in fromDict:
+        if key in toDict:
+            toDict[key] += fromDict[key]
+        else:
+            toDict[key] = fromDict[key]
 
 
 def findElemetnsFromFormula(formula):
@@ -76,20 +86,27 @@ def findElemetnsFromFormula(formula):
         cursor = 0
         while cursor < formulaSize:
             letter = formula[cursor]
-            if letter != "(":
+            if letter == "(":
                 cursor += 1
                 subFormula = ""
                 amount = ""
-                while letter[cursor] != ")":
-                    subFormula += letter[cursor]
+                while cursor < formulaSize and formula[cursor] != ")":
+                    subFormula += formula[cursor]
                     cursor += 1
                 cursor += 1
-                while letter[cursor].isdecimal():
-                    amount += letter[cursor]
-                mutipleCount(subFormula, amount, elementDict)
+                while cursor < formulaSize and formula[cursor].isdecimal():
+                    amount += formula[cursor]
+                    cursor += 1
+                fromDict = mutipleCount(subFormula, amount)
+                sumTwoDictionary(elementDict, fromDict)
                 continue
             newFormula += letter
             cursor += 1
+        formula = newFormula
+    formula = removeNoiseChar(formula)
+    fromDict = countElement(formula)
+    sumTwoDictionary(elementDict, fromDict)
+    return elementDict
 
 
 def calMineralPrice(metal):
@@ -97,4 +114,4 @@ def calMineralPrice(metal):
     ExcelDataExtracter.getElementGramPerMole()
 
 
-# findElemetnsFromFormula(testFormula)
+print(findElemetnsFromFormula(testFprm))

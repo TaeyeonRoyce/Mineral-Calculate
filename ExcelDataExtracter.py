@@ -16,8 +16,13 @@ def getMineralNameList():
     return mineralNameList
 
 
+elementsDataFrame = pd.read_excel(
+    "mineralDB.xlsx", sheet_name="Elements", index_col="Symbol"
+)
+
+
 def getElementGramPerMole(element):
-    databaseSource = "mineralDB.xlsx"
-    sheetName = "Elements"
-    startRow = 3
-    column = "B"
+    massDataFrame = elementsDataFrame["Mass per mole"]
+    print(massDataFrame)
+    mass = massDataFrame.loc[[element]]
+    return float(mass)

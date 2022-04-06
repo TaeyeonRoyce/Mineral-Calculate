@@ -1,8 +1,9 @@
 import requests
+import userPrivateInfo as info
 from bs4 import BeautifulSoup
 
 
-searchBaseURL = "https://www.mindat.org/search.php?search="
+searchBaseURL = info.SEARCH_BASE_URL
 
 
 def getChemicalFormulaBy(mineralName):
@@ -10,5 +11,5 @@ def getChemicalFormulaBy(mineralName):
     res.raise_for_status()
 
     soup = BeautifulSoup(res.text, "html.parser")
-    chemicalFormula = soup.select_one("#introdata > div:nth-child(1) > div")
+    chemicalFormula = soup.select_one(info.CHEMICAL_FORMULA_INDEX)
     return chemicalFormula.get_text()
