@@ -112,6 +112,3 @@ def findElemetnsFromFormula(formula):
 def calMineralPrice(metal):
     # {"Zn" : 4, "Si" : 2, "O" : 10, "H" : 4}
     ExcelDataExtracter.getElementGramPerMole()
-
-
-print(findElemetnsFromFormula(testFprm))

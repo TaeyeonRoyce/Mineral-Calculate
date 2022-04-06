@@ -1,9 +1,12 @@
 import pandas as pd
+import openpyxl
+import mineralCroller
+
+databaseSource = "mineralDB.xlsx"
 
 
 def getMineralNameList():
     # DB정보 명세
-    databaseSource = "mineralDB.xlsx"
     sheetName = "DB_1"
     startRow = 3
     column = "B"
@@ -17,7 +20,7 @@ def getMineralNameList():
 
 
 elementsDataFrame = pd.read_excel(
-    "mineralDB.xlsx", sheet_name="Elements", index_col="Symbol"
+    databaseSource, sheet_name="Elements", index_col="Symbol"
 )
 
 
@@ -26,3 +29,19 @@ def getElementGramPerMole(element):
     print(massDataFrame)
     mass = massDataFrame.loc[[element]]
     return float(mass)
+
+
+def saveChemicalFormula():
+    wb = openpyxl.load_workbook(databaseSource)
+    sheet = wb.active
+    mineralList = getMineralNameList()
+    for i in range(len(mineralList)):
+        row = i + 5
+        cell = "D" + str(row)
+        if sheet[cell].value == None:
+            sheet[cell].value = mineralCroller.getChemicalFormulaBy(mineralList[i])
+            print(sheet[cell].value)
+            wb.save(databaseSource)
+
+
+saveChemicalFormula()
