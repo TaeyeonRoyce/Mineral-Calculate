@@ -1,20 +1,12 @@
-import pandas as pd
 import mineralCroller
+import ExcelDataExtracter
+import formulaHandler
 
-# DB정보 명세
-databaseSource = "mineralDB.xlsx"
-sheetName = "DB_1"
-startRow = 3
-column = "B"
-
-# Excel DB에서 광물 이름 추출(in English)
-mineralNameDataFrame = pd.read_excel(
-    databaseSource, sheet_name=sheetName, header=startRow, usecols=column
-)
-mineralNameList = mineralNameDataFrame.loc[0:15, "광물 이름"].tolist()
+# DB에서 계산할 광물 이름 추출
+mineralNameList = ExcelDataExtracter.getMineralNameList()
 print(mineralNameList)
 
+# 광물마다 계산 (EN)
 for mineralName in mineralNameList:
-    mineralCroller.searchByName(mineralName)
-
-# 웹크롤링 from wikipedia (EN)
+    chemicalFormula = mineralCroller.getChemicalFormulaBy(mineralName)
+    formulaHandler.findElemetnsFromFormula(chemicalFormula)
