@@ -53,8 +53,13 @@ def countElement(subFormula):
 
 
 def removeNoiseChar(formula):
-    regex = ""
-    return re.sub(regex, "", formula)
+    removeRegex = "(\+[0-9])| · "
+    leftRegex = "\{|\["
+    rightRegex = "\}|\]"
+    formula = re.sub(removeRegex, "", formula)
+    formula = re.sub(leftRegex, "(", formula)
+    formula = re.sub(rightRegex, ")", formula)
+    return formula
 
 
 def mutipleCount(subFormula, num):
@@ -112,3 +117,6 @@ def findElemetnsFromFormula(formula):
 def calMineralPrice(metal):
     # {"Zn" : 4, "Si" : 2, "O" : 10, "H" : 4}
     ExcelDataExtracter.getElementGramPerMole()
+
+
+print(removeNoiseChar("(Ca,Na)[Al(Al,Si)Si2O8]"))

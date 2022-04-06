@@ -15,7 +15,7 @@ def getMineralNameList():
     mineralNameDataFrame = pd.read_excel(
         databaseSource, sheet_name=sheetName, header=startRow, usecols=column
     )
-    mineralNameList = mineralNameDataFrame.loc[0:15, "광물 이름"].tolist()
+    mineralNameList = mineralNameDataFrame.loc[0:55, "광물 이름"].tolist()
     return mineralNameList
 
 
@@ -42,6 +42,3 @@ def saveChemicalFormula():
             sheet[cell].value = mineralCroller.getChemicalFormulaBy(mineralList[i])
             print(sheet[cell].value)
             wb.save(databaseSource)
-
-
-saveChemicalFormula()
