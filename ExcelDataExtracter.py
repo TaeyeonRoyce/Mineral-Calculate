@@ -22,13 +22,26 @@ def getMineralNameList():
 elementsDataFrame = pd.read_excel(
     databaseSource, sheet_name="Elements", index_col="Symbol"
 )
+massDataFrame = elementsDataFrame["Mass per mole"]
 
 
-def getElementGramPerMole(element):
-    massDataFrame = elementsDataFrame["Mass per mole"]
-    print(massDataFrame)
+def getElementMassPerMole(element):
     mass = massDataFrame.loc[[element]]
     return float(mass)
+
+
+def getFormulaList():
+    # DB정보 명세
+    sheetName = "Result"
+    startRow = 3
+    column = "D"
+
+    # Excel DB에서 광물 이름 추출(in English)
+    mineralNameDataFrame = pd.read_excel(
+        databaseSource, sheet_name=sheetName, header=startRow, usecols=column
+    )
+    formulaList = mineralNameDataFrame.loc[0:70, "화학식"].tolist()
+    return formulaList
 
 
 def saveChemicalFormula():
@@ -42,3 +55,6 @@ def saveChemicalFormula():
             sheet[cell].value = mineralCroller.getChemicalFormulaBy(mineralList[i])
             print(sheet[cell].value)
             wb.save(databaseSource)
+
+
+saveChemicalFormula()

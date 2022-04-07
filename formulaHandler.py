@@ -53,10 +53,11 @@ def countElement(subFormula):
 
 
 def removeNoiseChar(formula):
-    removeRegex = "(\+[0-9])| · "
+    removeRegex = "([0-9]\+)| · |α-| "
     leftRegex = "\{|\["
     rightRegex = "\}|\]"
     formula = re.sub(removeRegex, "", formula)
+    # formula = re.sub(followingRemove, "", formula)
     formula = re.sub(leftRegex, "(", formula)
     formula = re.sub(rightRegex, ")", formula)
     return formula
@@ -85,6 +86,7 @@ def sumTwoDictionary(toDict, fromDict):
 
 def findElemetnsFromFormula(formula):
     elementDict = {}
+    formula = removeNoiseChar(formula)
     if containBracket(formula):
         formulaSize = len(formula)
         newFormula = ""
@@ -102,21 +104,39 @@ def findElemetnsFromFormula(formula):
                 while cursor < formulaSize and formula[cursor].isdecimal():
                     amount += formula[cursor]
                     cursor += 1
+                if amount == "":
+                    amount = "1"
                 fromDict = mutipleCount(subFormula, amount)
                 sumTwoDictionary(elementDict, fromDict)
                 continue
             newFormula += letter
             cursor += 1
         formula = newFormula
-    formula = removeNoiseChar(formula)
     fromDict = countElement(formula)
     sumTwoDictionary(elementDict, fromDict)
     return elementDict
 
 
-def calMineralPrice(metal):
+def calMoleAmount(formulaDict):
     # {"Zn" : 4, "Si" : 2, "O" : 10, "H" : 4}
-    ExcelDataExtracter.getElementGramPerMole()
+    massOfMineralPerMole = 0
+    for element in formulaDict:
+        elementMass = ExcelDataExtracter.getElementMassPerMole(element)
+        elementMass *= float(formulaDict[element])
+        massOfMineralPerMole += elementMass
+    perKGram = 1000 / massOfMineralPerMole
+
+    elementPerKG = {}
+    for element in formulaDict:
+        massPerKG = (
+            formulaDict[element]
+            * ExcelDataExtracter.getElementMassPerMole(element)
+            * perKGram
+        )
+        elementPerKG[element] = round(massPerKG, 2)
+    return elementPerKG
 
 
-print(removeNoiseChar("(Ca,Na)[Al(Al,Si)Si2O8]"))
+# print(calMoleAmount({"Zn": 4, "Si": 2, "O": 10, "H": 4}))
+# print(calMoleAmount({"Si": 1, "O": 2}))
+# print(findElemetnsFromFormula("α-Fe3+O(OH)"))
