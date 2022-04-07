@@ -1,6 +1,8 @@
 import pandas as pd
 import openpyxl
 import mineralCroller
+import formulaHandler
+import json
 
 databaseSource = "mineralDB.xlsx"
 
@@ -48,13 +50,27 @@ def saveChemicalFormula():
     wb = openpyxl.load_workbook(databaseSource)
     sheet = wb.active
     mineralList = getMineralNameList()
+    column = "D"
     for i in range(len(mineralList)):
         row = i + 5
-        cell = "D" + str(row)
+        cell = column + str(row)
         if sheet[cell].value == None:
             sheet[cell].value = mineralCroller.getChemicalFormulaBy(mineralList[i])
             print(sheet[cell].value)
             wb.save(databaseSource)
 
 
-saveChemicalFormula()
+def saveComponentsDict():
+    wb = openpyxl.load_workbook(databaseSource)
+    sheet = wb.active
+    formulaList = getFormulaList()
+    column = "F"
+    for i in range(len(formulaList)):
+        row = i + 5
+        cell = column + str(row)
+        if sheet[cell].value == None:
+            sheet[cell].value = json.dumps(
+                formulaHandler.findElemetnsFromFormula(formulaList[i])
+            )
+            print("save : ", sheet[cell].value)
+            wb.save(databaseSource)

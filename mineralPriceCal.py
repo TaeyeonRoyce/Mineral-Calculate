@@ -1,4 +1,3 @@
-import mineralCroller
 import ExcelDataExtracter
 import formulaHandler
 
@@ -7,7 +6,6 @@ import formulaHandler
 formulaList = ExcelDataExtracter.getFormulaList()
 for i in formulaList:
     print("{} : {}".format(i, formulaHandler.findElemetnsFromFormula(i)))
-    # print(i + "{0} : {1}" + formulaHandler.findElemetnsFromFormula(i))
 
 # 광물마다 계산 (EN)
 testFormula = "Zn4Si2O7(OH)2 · H2O"
