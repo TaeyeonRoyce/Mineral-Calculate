@@ -17,7 +17,7 @@ def getMineralNameList():
     mineralNameDataFrame = pd.read_excel(
         databaseSource, sheet_name=sheetName, header=startRow, usecols=column
     )
-    mineralNameList = mineralNameDataFrame.loc[0:55, "광물 이름"].tolist()
+    mineralNameList = mineralNameDataFrame.loc[0:80, "광물 이름"].tolist()
     return mineralNameList
 
 
@@ -44,7 +44,7 @@ def getFormulaList():
     mineralNameDataFrame = pd.read_excel(
         databaseSource, sheet_name=sheetName, header=startRow, usecols=column
     )
-    formulaList = mineralNameDataFrame.loc[0:70, "화학식"].tolist()
+    formulaList = mineralNameDataFrame.loc[0:99, "화학식"].tolist()
     return formulaList
 
 
@@ -88,7 +88,7 @@ def saveComponentsDict():
             sheet[cell].value = json.dumps(
                 formulaHandler.findElemetnsFromFormula(formulaList[i])
             )
-            print("save : ", sheet[cell].value)
+            print("{0} : {1}".format(formulaList[i], sheet[cell].value))
             wb.save(databaseSource)
 
 
@@ -151,6 +151,3 @@ def printPriceListDESC():
         usecols=[mineralNameIndex, PricePerKGIndex],
     )
     print(priceDataFrame.sort_values(by=["단위 질량 당 가격(USD/kg)"], ascending=False))
-
-
-printPriceListDESC()

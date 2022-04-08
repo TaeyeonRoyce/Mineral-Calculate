@@ -5,6 +5,6 @@ import ExcelDataExtracter
 # ExcelDataExtracter.saveChemicalFormula()
 
 # 화학식으로부터 구성원소 추출 후 저장
-# ExcelDataExtracter.saveComponentsDict()
-# ExcelDataExtracter.saveComponentsDictMetal()
+ExcelDataExtracter.saveComponentsDict()
+ExcelDataExtracter.saveComponentsDictMetal()
 ExcelDataExtracter.savePricePerKG()

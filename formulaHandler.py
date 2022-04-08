@@ -9,7 +9,7 @@ import re
 # Fe2+Fe3+2O4
 # PbS
 testFprm = "Zn4Si2O7(O2H)4"
-testFormula = "Zn4Si2O7(OH)2 · H2O"
+testFormula = "Ca2[Al2Si4O12]2 · (H2O)12"
 
 # [Zn, Si, P]
 # [3 ,  8, 1]
@@ -155,3 +155,10 @@ def calPriceElementsDict(formulaDict):
         price *= float(formulaDict[element])
         priceOfMineralPerKG += price
     return priceOfMineralPerKG
+
+
+def toPricePerVolume(pricePerKg):
+    return pricePerKg
+
+
+print(findElemetnsFromFormula(testFormula))
