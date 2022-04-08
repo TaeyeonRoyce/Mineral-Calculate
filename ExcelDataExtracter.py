@@ -151,3 +151,18 @@ def printPriceListDESC():
         usecols=[mineralNameIndex, PricePerKGIndex],
     )
     print(priceDataFrame.sort_values(by=["단위 질량 당 가격(USD/kg)"], ascending=False))
+
+
+def saveGs():
+    wb = openpyxl.load_workbook(databaseSource)
+    sheet = wb.active
+    mineralList = getMineralNameList()
+    column = "F"
+    for i in range(len(mineralList)):
+        row = i + 5
+        cell = column + str(row)
+        if sheet[cell].value == None:
+            print(mineralList[i])
+            sheet[cell].value = mineralCroller.getGSBy(mineralList[i])
+            print(sheet[cell].value)
+            wb.save(databaseSource)
