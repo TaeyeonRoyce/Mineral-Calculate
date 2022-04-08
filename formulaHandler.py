@@ -14,7 +14,7 @@ testFormula = "Zn4Si2O7(OH)2 · H2O"
 # [Zn, Si, P]
 # [3 ,  8, 1]
 # => {Zn : 3, Si : 8, P : 1}
-def saveToDictionary(symbols, amounts):
+def toDictionary(symbols, amounts):
     formDict = {}
     for i in range(len(symbols)):
         if symbols[i] in formDict:
@@ -49,9 +49,11 @@ def countElement(subFormula):
             amounts.append(int(amountTmp))
             symbolMemory = ""
         symbolMemory += letter
-    return saveToDictionary(symbols, amounts)
+    return toDictionary(symbols, amounts)
 
 
+# Zn4Fe3+O7[OH]2 · H2O
+# => Zn4FeO7(OH)2H2O
 def removeNoiseChar(formula):
     removeRegex = "([0-9]\+)| · |α-| "
     leftRegex = "\{|\["
@@ -63,6 +65,8 @@ def removeNoiseChar(formula):
     return formula
 
 
+# H2O, 2
+# => {O : 2, H: 4}
 def mutipleCount(subFormula, num):
     countDict = countElement(subFormula)
     for key in countDict:
@@ -76,6 +80,9 @@ def containBracket(formula):
     return False
 
 
+# {Zn : 1, O : 3}
+# {O : 4, H : 2}
+# => {Zn : 1, O : 7, H : 2}
 def sumTwoDictionary(toDict, fromDict):
     for key in fromDict:
         if key in toDict:
@@ -84,6 +91,8 @@ def sumTwoDictionary(toDict, fromDict):
             toDict[key] = fromDict[key]
 
 
+# Zn4Si2O7(O2H)4
+# => {Zn : 4, Si : 2, O : 15, H : 4}
 def findElemetnsFromFormula(formula):
     elementDict = {}
     formula = removeNoiseChar(formula)
@@ -117,8 +126,10 @@ def findElemetnsFromFormula(formula):
     return elementDict
 
 
+# {"Zn" : 4, "Si" : 2, "O" : 10, "H" : 4}
+# => {'Zn': 542.89, 'Si': 116.61, 'O': 332.13, 'H': 8.37}
+# Zn4Si2O7(OH)2 · H2O 에서 1Kg당 원자 함량
 def calMoleAmount(formulaDict):
-    # {"Zn" : 4, "Si" : 2, "O" : 10, "H" : 4}
     massOfMineralPerMole = 0
     for element in formulaDict:
         elementMass = ExcelDataExtracter.getElementMassPerMole(element)
@@ -137,6 +148,10 @@ def calMoleAmount(formulaDict):
     return elementPerKG
 
 
-# print(calMoleAmount({"Zn": 4, "Si": 2, "O": 10, "H": 4}))
-# print(calMoleAmount({"Si": 1, "O": 2}))
-# print(findElemetnsFromFormula("α-Fe3+O(OH)"))
+def calPriceElementsDict(formulaDict):
+    priceOfMineralPerKG = 0
+    for element in formulaDict:
+        price = ExcelDataExtracter.getElementPricePerKG(element)
+        price *= float(formulaDict[element])
+        priceOfMineralPerKG += price
+    return priceOfMineralPerKG

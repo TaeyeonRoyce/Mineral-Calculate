@@ -26,6 +26,7 @@ elementsDataFrame = pd.read_excel(
 )
 massDataFrame = elementsDataFrame["Mass per mole"]
 metalDataFrame = elementsDataFrame["비금속"]
+priceDataFrame = elementsDataFrame["Price (USD / kg)"]
 
 
 def getElementMassPerMole(element):
@@ -45,6 +46,11 @@ def getFormulaList():
     )
     formulaList = mineralNameDataFrame.loc[0:70, "화학식"].tolist()
     return formulaList
+
+
+def getElementPricePerKG(element):
+    price = priceDataFrame.loc[[element]]
+    return float(price)
 
 
 def isMetal(element):
@@ -109,3 +115,42 @@ def filterNoneMetal(componentsDict):
         if isMetal(element):
             metalDict[element] = componentsDict[element]
     return metalDict
+
+
+def savePricePerKG():
+    wb = openpyxl.load_workbook(databaseSource)
+    sheet = wb.active
+    formulaList = getFormulaList()
+    column = "J"
+    for i in range(len(formulaList)):
+        if formulaList[i] == "Null":
+            continue
+        row = i + 5
+        cell = column + str(row)
+        if sheet[cell].value == None:
+            componentsDict = formulaHandler.findElemetnsFromFormula(formulaList[i])
+            metalDict = filterNoneMetal(componentsDict)
+            pricePerKg = round(formulaHandler.calPriceElementsDict(metalDict), 2)
+            sheet[cell].value = json.dumps(pricePerKg)
+            print("save : ", sheet[cell].value)
+            wb.save(databaseSource)
+
+
+def printPriceListDESC():
+    # DB정보 명세
+    sheetName = "Result"
+    startRow = 3
+    mineralNameIndex = 1
+    PricePerKGIndex = 9
+
+    # Excel DB에서 화학식 추출
+    priceDataFrame = pd.read_excel(
+        databaseSource,
+        sheet_name=sheetName,
+        header=startRow,
+        usecols=[mineralNameIndex, PricePerKGIndex],
+    )
+    print(priceDataFrame.sort_values(by=["단위 질량 당 가격(USD/kg)"], ascending=False))
+
+
+printPriceListDESC()

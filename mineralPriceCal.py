@@ -10,5 +10,6 @@ import formulaHandler
 # 광물마다 계산 (EN)
 testFormula = "Zn4Si2O7(OH)2 · H2O"
 # print(formulaHandler.findElemetnsFromFormula(testFormula))
-ExcelDataExtracter.saveComponentsDict()
-ExcelDataExtracter.saveComponentsDictMetal()
+# ExcelDataExtracter.saveComponentsDict()
+# ExcelDataExtracter.saveComponentsDictMetal()
+print(formulaHandler.calMoleAmount({"Zn": 4, "Si": 2, "O": 10, "H": 4}))
