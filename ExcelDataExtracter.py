@@ -3,6 +3,7 @@ import openpyxl
 import mineralCroller
 import formulaHandler
 import json
+import numpy as np
 
 databaseSource = "mineralDB.xlsx"
 elementsDataFrame = pd.read_excel(
@@ -198,14 +199,47 @@ def savePricePerVolume():
             continue
         row = i + 5
         cell = column + str(row)
-        gs = getMineralGs(minPriceMassDataFrame.loc[idx, "광물 이름"])
-        pricePerVolume = round(
-            gs * minPriceMassDataFrame.loc[idx, "단위 질량 당 가격(USD/kg)"], 2
-        )
-        sheet[cell].value = pricePerVolume
-        print("save : ", sheet[cell].value)
+        if sheet[cell].value == None:
+            gs = getMineralGs(minPriceMassDataFrame.loc[idx, "광물 이름"])
+            pricePerVolume = round(
+                gs * minPriceMassDataFrame.loc[idx, "단위 질량 당 가격(USD/kg)"], 2
+            )
+            sheet[cell].value = pricePerVolume
+            print("save : ", sheet[cell].value)
+            wb.save(databaseSource)
+        i += 1
+
+
+def printPriceVolumeDESC():
+    # DB정보 명세
+    sheetName = "Result"
+    startRow = 3
+    mineralNameIndex = 1
+    PricePerVolumeIndex = 11
+
+    # Excel DB에서 화학식 추출
+    priceDataFrame = pd.read_excel(
+        databaseSource,
+        sheet_name=sheetName,
+        header=startRow,
+        usecols=[mineralNameIndex, PricePerVolumeIndex],
+    )
+    descResult = priceDataFrame.sort_values(by=["단위 부피 당 가격(USD/cm3)"], ascending=False)
+
+    wb = openpyxl.load_workbook(databaseSource)
+    sheet = wb.active
+    i = 5
+    columnMin = "B"
+    columnPrice = "D"
+    for idx in descResult.index:
+        cellMin = columnMin + str(i)
+        cellPrice = columnPrice + str(i)
+        sheet[cellMin].value = descResult.loc[idx, "광물 이름"]
+        sheet[cellPrice].value = descResult.loc[idx, "단위 부피 당 가격(USD/cm3)"]
+        print(sheet[cellMin].value)
+        print(sheet[cellPrice].value)
         wb.save(databaseSource)
         i += 1
 
 
-savePricePerVolume()
+printPriceVolumeDESC()

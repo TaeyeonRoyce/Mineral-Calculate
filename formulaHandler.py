@@ -159,6 +159,3 @@ def calPriceElementsDict(formulaDict):
 
 def toPricePerVolume(pricePerKg):
     return pricePerKg
-
-
-print(findElemetnsFromFormula(testFormula))
