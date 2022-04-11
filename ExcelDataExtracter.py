@@ -142,8 +142,8 @@ def savePricePerKG():
         cell = column + str(row)
         if sheet[cell].value == None:
             componentsDict = formulaHandler.findElemetnsFromFormula(formulaList[i])
-            metalDict = filterNoneMetal(componentsDict)
-            pricePerKg = round(formulaHandler.calPriceElementsDict(metalDict), 2)
+            calGrams = formulaHandler.calMoleAmount(componentsDict)
+            pricePerKg = round(formulaHandler.calPriceElementsDict(calGrams), 2)
             sheet[cell].value = json.dumps(pricePerKg)
             print("save : ", sheet[cell].value)
             wb.save(databaseSource)
@@ -202,9 +202,9 @@ def savePricePerVolume():
         if sheet[cell].value == None:
             gs = getMineralGs(minPriceMassDataFrame.loc[idx, "광물 이름"])
             pricePerVolume = round(
-                gs * minPriceMassDataFrame.loc[idx, "단위 질량 당 가격(USD/kg)"], 2
+                gs * minPriceMassDataFrame.loc[idx, "단위 질량 당 가격(USD/kg)"], 6
             )
-            sheet[cell].value = pricePerVolume
+            sheet[cell].value = pricePerVolume / 1000
             print("save : ", sheet[cell].value)
             wb.save(databaseSource)
         i += 1
@@ -242,4 +242,4 @@ def printPriceVolumeDESC():
         i += 1
 
 
-printPriceVolumeDESC()
+# printPriceVolumeDESC()

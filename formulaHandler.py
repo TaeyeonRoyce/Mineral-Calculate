@@ -128,7 +128,7 @@ def findElemetnsFromFormula(formula):
 
 # {"Zn" : 4, "Si" : 2, "O" : 10, "H" : 4}
 # => {'Zn': 542.89, 'Si': 116.61, 'O': 332.13, 'H': 8.37}
-# Zn4Si2O7(OH)2 · H2O 에서 1Kg당 원자 함량
+# Zn4Si2O7(OH)2 · H2O 에서 1Kg당 몰 함량
 def calMoleAmount(formulaDict):
     massOfMineralPerMole = 0
     for element in formulaDict:
@@ -150,9 +150,10 @@ def calMoleAmount(formulaDict):
 
 def calPriceElementsDict(formulaDict):
     priceOfMineralPerKG = 0
-    for element in formulaDict:
+    metalDict = ExcelDataExtracter.filterNoneMetal(formulaDict)
+    for element in metalDict:
         price = ExcelDataExtracter.getElementPricePerKG(element)
-        price *= float(formulaDict[element])
+        price *= float(metalDict[element])
         priceOfMineralPerKG += price
     return priceOfMineralPerKG
 
