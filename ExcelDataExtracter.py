@@ -143,7 +143,7 @@ def savePricePerKG():
         if sheet[cell].value == None:
             componentsDict = formulaHandler.findElemetnsFromFormula(formulaList[i])
             calGrams = formulaHandler.calMoleAmount(componentsDict)
-            pricePerKg = round(formulaHandler.calPriceElementsDict(calGrams), 2)
+            pricePerKg = round(formulaHandler.calPriceElementsDict(calGrams), 4)
             sheet[cell].value = json.dumps(pricePerKg)
             print("save : ", sheet[cell].value)
             wb.save(databaseSource)
@@ -194,7 +194,10 @@ def savePricePerVolume():
     column = "L"
     i = 0
     for idx in minPriceMassDataFrame.index:
-        if minPriceMassDataFrame.loc[idx, "단위 질량 당 가격(USD/kg)"] == "Null":
+        if (
+            minPriceMassDataFrame.loc[idx, "단위 질량 당 가격(USD/kg)"] == "Null"
+            or minPriceMassDataFrame.loc[idx, "단위 질량 당 가격(USD/kg)"] == None
+        ):
             i += 1
             continue
         row = i + 5
@@ -204,7 +207,7 @@ def savePricePerVolume():
             pricePerVolume = round(
                 gs * minPriceMassDataFrame.loc[idx, "단위 질량 당 가격(USD/kg)"], 6
             )
-            sheet[cell].value = pricePerVolume / 1000
+            sheet[cell].value = pricePerVolume / 100
             print("save : ", sheet[cell].value)
             wb.save(databaseSource)
         i += 1

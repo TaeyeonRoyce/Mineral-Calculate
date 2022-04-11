@@ -155,7 +155,7 @@ def calPriceElementsDict(formulaDict):
         price = ExcelDataExtracter.getElementPricePerKG(element)
         price *= float(metalDict[element])
         priceOfMineralPerKG += price
-    return priceOfMineralPerKG
+    return (priceOfMineralPerKG / 1000)
 
 
 def toPricePerVolume(pricePerKg):
