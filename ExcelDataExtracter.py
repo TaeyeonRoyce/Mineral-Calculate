@@ -5,6 +5,18 @@ import formulaHandler
 import json
 
 databaseSource = "mineralDB.xlsx"
+elementsDataFrame = pd.read_excel(
+    databaseSource, sheet_name="Elements", index_col="Symbol"
+)
+
+mineralDataFrame = pd.read_excel(
+    databaseSource, sheet_name="DB_1", header=3, index_col="광물 이름"
+)
+
+massDataFrame = elementsDataFrame["Mass per mole"]
+metalDataFrame = elementsDataFrame["비금속"]
+priceDataFrame = elementsDataFrame["Price (USD / kg)"]
+gsDataFrame = mineralDataFrame["비중"]
 
 
 def getMineralNameList():
@@ -19,14 +31,6 @@ def getMineralNameList():
     )
     mineralNameList = mineralNameDataFrame.loc[0:80, "광물 이름"].tolist()
     return mineralNameList
-
-
-elementsDataFrame = pd.read_excel(
-    databaseSource, sheet_name="Elements", index_col="Symbol"
-)
-massDataFrame = elementsDataFrame["Mass per mole"]
-metalDataFrame = elementsDataFrame["비금속"]
-priceDataFrame = elementsDataFrame["Price (USD / kg)"]
 
 
 def getElementMassPerMole(element):
@@ -51,6 +55,14 @@ def getFormulaList():
 def getElementPricePerKG(element):
     price = priceDataFrame.loc[[element]]
     return float(price)
+
+
+def getMineralGs(mineral):
+    gs = str(gsDataFrame.loc[[mineral]][0])
+    gs = gs.split(" ~ ")
+    if len(gs) > 1:
+        return round(((float(gs[0]) + float(gs[1])) / 2), 2)
+    return float(gs[0])
 
 
 def isMetal(element):
@@ -166,3 +178,34 @@ def saveGs():
             sheet[cell].value = mineralCroller.getGSBy(mineralList[i])
             print(sheet[cell].value)
             wb.save(databaseSource)
+
+
+def savePricePerVolume():
+    wb = openpyxl.load_workbook(databaseSource)
+    sheet = wb.active
+
+    minPriceMassDataFrame = pd.read_excel(
+        databaseSource,
+        sheet_name="Result",
+        header=3,
+        usecols=["광물 이름", "단위 질량 당 가격(USD/kg)"],
+    )
+    column = "L"
+    i = 0
+    for idx in minPriceMassDataFrame.index:
+        if minPriceMassDataFrame.loc[idx, "단위 질량 당 가격(USD/kg)"] == "Null":
+            i += 1
+            continue
+        row = i + 5
+        cell = column + str(row)
+        gs = getMineralGs(minPriceMassDataFrame.loc[idx, "광물 이름"])
+        pricePerVolume = round(
+            gs * minPriceMassDataFrame.loc[idx, "단위 질량 당 가격(USD/kg)"], 2
+        )
+        sheet[cell].value = pricePerVolume
+        print("save : ", sheet[cell].value)
+        wb.save(databaseSource)
+        i += 1
+
+
+savePricePerVolume()
